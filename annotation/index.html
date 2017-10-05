@@ -69,8 +69,18 @@
 
         function check_time() {
 
-            var color = "0"+(Number(current_time).toString(16)).slice(-2).toUpperCase();
-            document.getElementById('lyrics').style.color = "#" + color;
+            function rand_color() {
+                var options = "ABCDEF0123456789";
+                var new_color = "";
+                for (var index = 0; index < 6; index++) {
+                    new_color += options[Math.floor(Math.random() * 16)];
+                }
+                return "#" + new_color;
+            }
+
+            var color = rand_color();
+
+            document.getElementById('lyrics').style.color = color;
 
             if (current_time > 9 && current_time <= 25) {
                 document.getElementById('lyrics').innerHTML = stanzas["first"];
