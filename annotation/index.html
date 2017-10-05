@@ -10,14 +10,101 @@
 
     <h1 id="title">A Classic</h1>
 
-    <video src="https://www.cs.tufts.edu/comp/20/classic.mp4" id="a_classic" controls>
-        <track kind="captions" src="hush_track.vtt" srclang="en">
-    </video>
+    <video src="https://www.cs.tufts.edu/comp/20/classic.mp4" id="a_classic" controls></video>
     <div id="lyrics"></div>
 
     <script>
-        // Complete this section and create a CSS file named style.css
-    </script>
+        var stanzas = {
+            zero: "",
+            first:  `Children have You ever met the Bogeyman before<br>
+                    No, of course You haven't for You're much too good, I'm sure;<br>
+                    Don't You be afraid of him if he should visit You,<br>
+                    He's a great big coward, so I'll tell You what to do<br>`,
+            
+            second: `Hush, hush, hush, here comes the Bogeyman,<br>
+                    Don't let him come too close to You, he'll catch you if he can.<br>
+                    Just pretend that you're a crocodile<br>
+                    And you will find that Bogeyman will run away a mile.<br>`,
 
+            third:  `Say Shoo shoo and stick him with a pin<br>
+                    Bogeyman will very nearly jump out of his skin<br>
+                    Say buzz buzz just like the wasps that sting<br>
+                    Bogeyman will think you are an elephant with wings<br>`,
+
+            fourth: `Hush, hush, hush, here comes the Bogeyman<br>
+                    Tell him you've got soldiers in your bed<br>
+                    For he will never guess that they are only made of lead<br>`,
+
+            fifth: `Say Hush hush, he'll think that you're asleep<br>
+                    If you make a lovely snore away he'll softly creep<br>
+                    Sing this tune you children one and all<br>
+                    Bogeyman will run away, he'll think it's Henry Hall!<br>`,
+
+            sixth: `When the shadows of the evening creep across the sky<br>
+                    And your Mummy comes upstairs to sing a lullaby<br>
+                    Tell her that the bogeyman no longer frightens you<br>
+                    Uncle Henry's very kindly told you what to do<br>`,
+
+            seventh: `Hush, hush, hush, here comes the Bogeyman<br>
+                    Don't let him come too close to you, He'll catch you if he can.<br>
+                    Just pretend your teddy bear's a dog<br>
+                    Then shout out, 'Fetch him, Teddy!' and he'll hop off like a frog.<br>`,
+
+            eighth: `Say Meoow, pretend that you're a cat<br>
+                    He'll think you may scratch him that make him fall down flat<br>
+                    Just pretend he isn't really there<br>
+                    You will find that Bogey man will vanish in thin air<br>`,
+
+            ninth: `Here's one way to catch him without fail<br>
+                    Just keep a little salt with you<br>
+                    and put it on his tail<br>`
+        }
+        var current_stanza = "zero";
+        var video = document.getElementsByTagName("video")[0];
+        var current_time = 0;
+        video.addEventListener("timeupdate", function() { 
+            current_time = video.currentTime;
+            check_time();
+        }, true)
+
+        function check_time() {
+
+            var color = "0"+(Number(current_time).toString(16)).slice(-2).toUpperCase();
+            document.getElementById('lyrics').style.color = "#" + color;
+
+            if (current_time > 9 && current_time <= 25) {
+                document.getElementById('lyrics').innerHTML = stanzas["first"];
+            }
+            else if (current_time > 25 && current_time <= 41) {
+                document.getElementById('lyrics').innerHTML = stanzas["second"];
+
+            }
+            else if (current_time > 41 && current_time <= 57) {
+                document.getElementById('lyrics').innerHTML = stanzas["third"];
+            }
+            else if (current_time > 57 && current_time <= 72) {
+                document.getElementById('lyrics').innerHTML = stanzas["fourth"];
+            }
+            else if (current_time > 72 && current_time <= 95) {
+                document.getElementById('lyrics').innerHTML = stanzas["fifth"];
+            }
+            else if (current_time > 95 && current_time <= 111) {
+                document.getElementById('lyrics').innerHTML = stanzas["sixth"];
+            }
+            else if (current_time > 111 && current_time <= 126) {
+                document.getElementById('lyrics').innerHTML = stanzas["seventh"];
+            }
+            else if (current_time > 126 && current_time <= 150) {
+                document.getElementById('lyrics').innerHTML = stanzas["eighth"];
+            }
+            else if (current_time > 150 && current_time <= 167) {
+                document.getElementById('lyrics').innerHTML = stanzas["ninth"];
+            }
+        }
+
+
+
+
+    </script>
 </body>
 </html> 
