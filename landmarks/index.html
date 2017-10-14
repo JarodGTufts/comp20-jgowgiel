@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Landmarks</title>
+    <link rel="stylesheet" href="style.css" type="text/css" />
+
+</head>
+
+<body>
+
+    <div class="coordinates">
+        <div id="latitude"></div>
+        <div id="longitude"></div>
+    </div>
+
+
+    <script>
+
+        /* Initialize server request */
+        var location_request = new XMLHttpRequest();
+        location_request.addEventListener("load", print_result);
+        location_request.open("POST", "https://defense-in-derpth.herokuapp.com/sendLocation");
+        location_request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+        function fetch_location() {
+            navigator.geolocation.getCurrentPosition(function (position) { 
+                send_lat_long_req(position.coords.latitude, position.coords.longitude);
+            } );
+        }
+
+        function send_lat_long_req(latitude, longitude) {
+            var req_string = "login=JhkgVXOV&lat=" + latitude + "&lng=" + longitude;
+            location_request.send(req_string);
+        }
+
+        function print_result() {
+            console.log(this.responseText);
+        }
+
+        fetch_location();
+
+
+    </script>
+
+</body>
+
+</html>
