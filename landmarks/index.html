@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1.0">
     <title>Landmarks</title>
     <link rel="stylesheet" href="style.css" type="text/css" />
 
@@ -9,39 +10,106 @@
 
 <body>
 
-    <div class="coordinates">
-        <div id="latitude"></div>
-        <div id="longitude"></div>
-    </div>
+    <div id="map"></div>
 
 
     <script>
-
         /* Initialize server request */
         var location_request = new XMLHttpRequest();
-        location_request.addEventListener("load", print_result);
-        location_request.open("POST", "https://defense-in-derpth.herokuapp.com/sendLocation");
-        location_request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        location_request.addEventListener("load", render_map);
+        location_request.open("POST", 
+                    "https://defense-in-derpth.herokuapp.com/sendLocation");
 
+        location_request.setRequestHeader("Content-type", 
+                    "application/x-www-form-urlencoded");
+
+        var curr_lat, curr_long;
+        var map;
+        var location_response;
+        var infowindow;
+
+        /* Fetch location data, starting a response chain that terminates with
+         * the map being loaded */
         function fetch_location() {
             navigator.geolocation.getCurrentPosition(function (position) { 
                 send_lat_long_req(position.coords.latitude, position.coords.longitude);
             } );
         }
 
+        /* Send the request */
         function send_lat_long_req(latitude, longitude) {
             var req_string = "login=JhkgVXOV&lat=" + latitude + "&lng=" + longitude;
+            
+            curr_lat = latitude;
+            curr_long = longitude;
+
             location_request.send(req_string);
         }
 
-        function print_result() {
-            console.log(this.responseText);
+        /* Initialize the map using the latitude and longitude returned 
+         * earlier */
+        function init_map() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 18,
+                center: {lat: curr_lat, lng: curr_long},
+                mapTypeId: 'terrain'
+            });
+
+            infowindow = new google.maps.InfoWindow()
         }
 
+        /* Once all of the map data has been gathered, load the map */
+        function render_map() {
+            location_response = JSON.parse(this.responseText);
+            
+            init_map();
+            
+            place_markers();
+        }
+
+        /* Place all of the markers onto the map */
+        function place_markers() {
+            location_response["people"].map( function(entry) {
+                
+                var lat_lng = new google.maps.LatLng(entry.lat, entry.lng);
+                var my_lat_lng = new google.maps.LatLng(curr_lat, curr_long);
+
+                /* Ensure that only distances less than one mile away are being loaded */
+                var distance = google.maps.geometry.spherical.computeDistanceBetween(lat_lng, my_lat_lng);
+                if (distance < 1610) {
+                    var marker = new google.maps.Marker({
+                        position: lat_lng,
+                        title: entry.login
+                    });
+
+                    marker.addListener("click", function() {
+                        var curr_lat_lng = new google.maps.LatLng(curr_lat, curr_long);
+                        var this_dist = (0.000621371) * google.maps.geometry.spherical.computeDistanceBetween(marker.position, curr_lat_lng);
+
+                        infowindow = new google.maps.InfoWindow({
+                            content: '<p>' + marker.title + '</p>' +
+                                     '<p>' + this_dist + ' miles</p>'
+                        });
+                        infowindow.open(map, marker);
+                    });
+
+                    marker.setMap(map);
+                }
+            });
+        }
+
+
+
+        
+        /* The function call that starts it all */
         fetch_location();
+
+        /* Loop through the data that has been returned, creating markers */
 
 
     </script>
+
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAvv09pm5FSohJnXwnxEpZ300IVlCRHYRE&libraries=geometry"></script>
 
 </body>
 
