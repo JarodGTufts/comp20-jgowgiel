@@ -55,6 +55,20 @@
                 mapTypeId: 'terrain'
             });
 
+            var self_image = {
+                url: '/self.png',
+                scaledSize: new google.maps.Size(50, 50)
+            };
+
+            /* TODO: Add more information here */
+            var marker = new google.maps.Marker({
+                position: new google.maps.LatLng(curr_lat, curr_long),
+                icon: self_image,
+                zIndex: 100
+            });
+
+            marker.setMap(map);
+
             infowindow = new google.maps.InfoWindow()
         }
 
