@@ -50,7 +50,7 @@
          * earlier */
         function init_map() {
             map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 18,
+                zoom: 15,
                 center: {lat: curr_lat, lng: curr_long},
                 mapTypeId: 'terrain'
             });
@@ -87,8 +87,8 @@
                         var this_dist = (0.000621371) * google.maps.geometry.spherical.computeDistanceBetween(marker.position, curr_lat_lng);
 
                         infowindow = new google.maps.InfoWindow({
-                            content: '<p>' + marker.title + '</p>' +
-                                     '<p>' + this_dist + ' miles</p>'
+                            content: '<p>Login: ' + marker.title + '</p>' +
+                                     '<p>Distance: ' + (Math.round(100 * this_dist) / 100) + ' miles</p>'
                         });
                         infowindow.open(map, marker);
                     });
@@ -96,16 +96,44 @@
                     marker.setMap(map);
                 }
             });
+
+
+            location_response["landmarks"].map( function(entry) {
+
+                var landmark_image = {
+                    url: '/landmark.png',
+                    scaledSize: new google.maps.Size(32, 32),
+                };
+
+                var lat_lng = new google.maps.LatLng(entry.geometry.coordinates[1], entry.geometry.coordinates[0]);
+                var my_lat_lng = new google.maps.LatLng(curr_lat, curr_long);
+
+                /* Ensure that only distances less than one mile away are being loaded */
+                var distance = google.maps.geometry.spherical.computeDistanceBetween(lat_lng, my_lat_lng);
+                if (distance < 1610) {
+                    var marker = new google.maps.Marker({
+                        position: lat_lng,
+                        title: entry.properties.Details,
+                        icon: landmark_image
+                    });
+
+                marker.addListener("click", function() {
+                    var curr_lat_lng = new google.maps.LatLng(curr_lat, curr_long);
+
+                    infowindow = new google.maps.InfoWindow({
+                        content: marker.title
+                    });
+                    infowindow.open(map, marker);
+                });
+
+                marker.setMap(map);
+
+                }
+            });
         }
-
-
-
         
         /* The function call that starts it all */
         fetch_location();
-
-        /* Loop through the data that has been returned, creating markers */
-
 
     </script>
 
