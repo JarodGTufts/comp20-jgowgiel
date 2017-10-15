@@ -27,6 +27,11 @@
         var map;
         var location_response;
         var infowindow;
+        /* Inititalize to a value greater than 1610 m (one mile) */
+        var closest_landmark = {
+            distance: 3000,
+            name: "",
+        };
 
         /* Fetch location data, starting a response chain that terminates with
          * the map being loaded */
@@ -67,6 +72,29 @@
                 zIndex: 100
             });
 
+            /* Add the closest landmark to the InfoWindow that will open when 
+             * clicked */
+            marker.addListener("click", function() {
+                infowindow = new google.maps.InfoWindow({
+                    content: "<p>Closest landmark: " + closest_landmark.name + "</p>" +
+                                "<p>Distance to landmark: " + Math.round(100 * 
+                                (0.000621371) * closest_landmark.distance) 
+                                / 100 + " miles</p>"
+
+                });
+                infowindow.open(map, marker);
+                
+                var landmark_line = new google.maps.Polyline({
+                    path: [closest_landmark.position, new google.maps.LatLng(curr_lat, curr_long)],
+                    geodesic: true,
+                    strokeColor: '#FF7400',
+                    strokeOpacity: 1.0,
+                    strokeWeight: 2
+                });
+
+                landmark_line.setMap(map);
+            });
+
             marker.setMap(map);
 
             infowindow = new google.maps.InfoWindow()
@@ -81,7 +109,9 @@
             place_markers();
         }
 
-        /* Place all of the markers onto the map */
+        /*****************************
+         *********** PEOPLE **********
+         *****************************/
         function place_markers() {
             location_response["people"].map( function(entry) {
                 
@@ -91,6 +121,7 @@
                 /* Ensure that only distances less than one mile away are being loaded */
                 var distance = google.maps.geometry.spherical.computeDistanceBetween(lat_lng, my_lat_lng);
                 if (distance < 1610) {
+
                     var marker = new google.maps.Marker({
                         position: lat_lng,
                         title: entry.login
@@ -111,7 +142,9 @@
                 }
             });
 
-
+            /*****************************
+             ******** LANDMARKS **********
+             *****************************/
             location_response["landmarks"].map( function(entry) {
 
                 var landmark_image = {
@@ -125,22 +158,29 @@
                 /* Ensure that only distances less than one mile away are being loaded */
                 var distance = google.maps.geometry.spherical.computeDistanceBetween(lat_lng, my_lat_lng);
                 if (distance < 1610) {
+
+                    if (distance < closest_landmark.distance) {
+                        closest_landmark.distance = distance;
+                        closest_landmark.name = entry.properties.Location_Name;
+                        closest_landmark.position = lat_lng;
+                    }
+
                     var marker = new google.maps.Marker({
                         position: lat_lng,
                         title: entry.properties.Details,
                         icon: landmark_image
                     });
 
-                marker.addListener("click", function() {
-                    var curr_lat_lng = new google.maps.LatLng(curr_lat, curr_long);
+                    marker.addListener("click", function() {
+                        var curr_lat_lng = new google.maps.LatLng(curr_lat, curr_long);
 
-                    infowindow = new google.maps.InfoWindow({
-                        content: marker.title
+                        infowindow = new google.maps.InfoWindow({
+                            content: marker.title
+                        });
+                        infowindow.open(map, marker);
                     });
-                    infowindow.open(map, marker);
-                });
 
-                marker.setMap(map);
+                    marker.setMap(map);
 
                 }
             });
