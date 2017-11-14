@@ -18,9 +18,9 @@
         var location_request = new XMLHttpRequest();
         location_request.addEventListener("load", render_map);
         location_request.open("POST", 
-                    "https://defense-in-derpth.herokuapp.com/sendLocation");
+                    "https://pacific-coast-87289.herokuapp.com/sendLocation");
 
-        location_request.setRequestHeader("Content-type", 
+        location_request.setRequestHeader("Content-type",
                     "application/x-www-form-urlencoded");
 
         var curr_lat, curr_long;
