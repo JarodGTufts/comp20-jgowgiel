@@ -1,0 +1,3 @@
+## This repository was created for the COMP 20 Web Development course at Tufts University.
+
+## I most enjoyed Assignment 3, where we were tasked with creating a simple web server using Heroku. I found this to be the most educational assignment of the course; using the knowledge I have gained from this assignment, I have been creating my own standalone application as a side project, [which remains unfinished for now](queue-collab.herokuapp.com) but is a great example of the knowledge that I have gained from this assignment.
